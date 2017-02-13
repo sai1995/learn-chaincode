@@ -263,10 +263,10 @@ err = stub.PutState("abcd",orderasbytes)
 		return nil, err
         }
 
-	t.read(stub,Openorder.OrderID)
 	
 	
-	// writing the order to orders list
+	
+	                                                      // writing the order to orders list
 	ordersAsBytes, err := stub.GetState(openOrdersStr)
 	if err != nil {
 		return nil, errors.New("Failed to get opentrades")
@@ -282,12 +282,14 @@ err = stub.PutState("abcd",orderasbytes)
 		return nil, err
 	}
 	
-	t.read(stub,Openorder.OrderID)
+	t.read(stub,Openorder.OrderID)             //printing the Order
 
 return nil,nil
 }
-func (t *SimpleChaincode) init_supplier(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-orderasbytes, _ := stub.GetState(args[0])
+func (t *SimpleChaincode) view_orders(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	
+	
+/*orderasbytes, _ := stub.GetState(args[0])
 Performorder := Order{}
 json.Unmarshal(orderasbytes, &Performorder)
 containerasbytes, _ := stub.GetState("1x23")
@@ -306,7 +308,39 @@ return nil,nil
 } else{
 fmt.Println("Sorry")
 return nil,nil
+
+
+
 }
+
+*/
+	ordersAsBytes, err := stub.GetState(openOrdersStr)
+	if err != nil {
+		return nil, errors.New("Failed to get opentrades")
+	}
+	var orders AllOrders
+	json.Unmarshal(ordersAsBytes, &orders)										//un stringify it aka JSON.parse()
+	
+for i := range orders.OpenOrders{
+	
+	milkAsBytes, err := stub.GetState(args[0])
+			if err != nil {
+				return nil, errors.New("Failed to get thing")
+			}
+			saleMilk := MilkContainer{}
+			json.Unmarshal(milkAsBytes, &saleMilk)	
+	
+	if orders.OpenOrders[i].Litres == saleMilk.Litres{
+		
+		fmt.Println("Shipping will be done soon, u are inside view_order function")
+		orders.OpenOrders[i].Status = "Received order"
+	}
+}
+	
+	return nil,nil
+	
+	
+	
 }
 func (t *SimpleChaincode) init_logistics(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 orderid := args[0]
@@ -322,6 +356,11 @@ a[0] = args[0]
 a[1] ="1x23"
 t.completedelivery(stub,a)
 return nil,nil
+	
+
+	
+	
+	
 }
 func (t *SimpleChaincode) completedelivery(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 orderid := args[0]
