@@ -48,11 +48,13 @@ type AllOrders struct{
 }
 
 func main() {
-	err := shim.Start(new(SimpleChaincode))
+err := shim.Start(new(SimpleChaincode))	
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
 }
+
+
 func(t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 
 	var err error
@@ -81,7 +83,7 @@ func(t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string,
 	
 	
 	var orders AllOrders
-	jsonAsBytes, _ = json.Marshal(orders)								//clear the open trade struct
+	jsonAsBytes, _ := json.Marshal(orders)								//clear the open trade struct
 	err = stub.PutState(openOrdersStr, jsonAsBytes)
 	if err != nil {
 		return nil, err
@@ -272,17 +274,18 @@ err = stub.PutState("abcd",orderasbytes)
 		return nil, errors.New("Failed to get opentrades")
 	}
 	var orders AllOrders
-	json.Unmarshal(ordersAsBytes, &orders)										//un stringify it aka JSON.parse()
+	json.Unmarshal(ordersAsBytes, &orders)						//un stringify it aka JSON.parse()
 	
-	orders.OpenOrders = append(trades.OpenOrders, Openorder);						//append to open trades
+	orders.OpenOrders = append(orders.OpenOrders, Openorder);						//append to open trades
 	fmt.Println("! appended the order to orders list so that supplier can view")
-	jsonAsBytes, _ = json.Marshal(orders)
+	jsonAsBytes, _ := json.Marshal(orders)
 	err = stub.PutState(openOrdersStr, jsonAsBytes)								//rewrite open orders
 	if err != nil {
 		return nil, err
 	}
-	
-	t.read(stub,Openorder.OrderID)             //printing the Order
+var a []string
+a[0]=Openorder.OrderID 
+	t.read(stub,a)             //printing the Order
 
 return nil,nil
 }
